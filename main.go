@@ -17,9 +17,7 @@ import (
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-type apiConfig struct {
-	DB *database.Queries
-}
+type apiConfig struct{ DB *database.Queries }
 
 //go:embed static/*
 var staticFiles embed.FS
@@ -50,7 +48,7 @@ func main() {
 		}
 		dbQueries := database.New(db)
 		apiCfg.DB = dbQueries
-		log.Println("Connected to database!")
+		log.Println("Connecfed to database!")
 	}
 
 	router := chi.NewRouter()
