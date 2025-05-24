@@ -8,17 +8,26 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL:  '${{ secrets.DATABASE_URL }}'
 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+
+      - name: Install Goose CLI
+        run: |
+                  mkdir -p /home/runner/.local/bin
+                  curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.sh \
+                  | CONFIGURE=false INSTALL_PATH=/home/runner/.local/bin bash
+                  echo "/home/runner/.local/bin" >> $GITHUB_PATH
 
       - name: Set up Go
         uses: actions/setup-go@v5
 
       - name: build script 
         run: scripts/buildprod.sh
-
+        
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
@@ -27,8 +36,12 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: 'Use gcloud CLI'
+      - name: 'Use gcloud build'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-460813/notely-ar-repo/notely:latest'
+
+      - name: 'Run migrations'
+        run: './scripts/migrateup.sh' 
 
       - name: deploy to cloud run
         run: 'gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-460813/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project notely-460813 --max-instances=4'
+        
