@@ -96,6 +96,3 @@ func main() {
 }
 
 
-func doh() {
-	//unsused
-}
