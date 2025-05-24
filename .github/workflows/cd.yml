@@ -4,12 +4,12 @@ on:
   pull_request:
     branches: [main]
 
- jobs:
-   deploy:
-     name: Deploy
-     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
 
-     steps:
+    steps:
       - name: Check out code
         uses: actions/checkout@v4
 
@@ -18,5 +18,3 @@ on:
 
       - name: build exec
         run: scripts/buildprod.sh
-
-
